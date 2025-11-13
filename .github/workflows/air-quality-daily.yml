@@ -35,6 +35,7 @@ jobs:
           ipython notebooks/airquality/4_air_quality_batch_inference.ipynb
       - name: github pages publish
         uses: stefanzweifel/git-auto-commit-action@v5
+        continue-on-error: true
         with:
           commit_message: "Air Quality Dashboard published"
           commit_options: '--no-verify --signoff'
