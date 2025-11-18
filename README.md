@@ -10,6 +10,9 @@ The third notebook is used for training our model. We added one hot encoding for
 Finally, we display our results using our fourth notebook. They can be seen in Github pages, with one image per city. This is also run each day together with the second notebook.
 
 
+**The link for the pages is:** https://jarlsteph.github.io/Lab1-ID2223/
+
+
 # mlfs-book
 O'Reilly book - Building Machine Learning Systems with a feature store: batch, real-time, and LLMs
 
