@@ -287,14 +287,51 @@ def check_file_path(file_path):
     else:
         print(f"File successfully found at the path: {file_path}")
 
-def backfill_predictions_for_monitoring(weather_fg, air_quality_df, monitor_fg, model):
-    features_df = weather_fg.read()
-    features_df = features_df.sort_values(by=['date'], ascending=True)
-    features_df = features_df.tail(10)
-    features_df['predicted_pm25'] = model.predict(features_df[['temperature_2m_mean', 'precipitation_sum', 'wind_speed_10m_max', 'wind_direction_10m_dominant']])
-    df = pd.merge(features_df, air_quality_df[['date','pm25','street','country']], on="date")
+# needed to change it to work with our new feats
+def backfill_predictions_for_monitoring(weather_df, air_quality_df, monitor_fg, model):
+    features_df = weather_df.read()
+
+    # rename back to the model's weather names
+    features_df = features_df.rename(columns={
+        "temperature_2m_mean": "weather_temperature_2m_mean",
+        "precipitation_sum": "weather_precipitation_sum",
+        "wind_speed_10m_max": "weather_wind_speed_10m_max",
+        "wind_direction_10m_dominant": "weather_wind_direction_10m_dominant"
+    })
+
+    features_df = features_df.sort_values(by=['date']).tail(10)
+
+    
+    # Create a prediction copy (full features)
+    
+    pred_df = features_df.copy()
+
+    # Add missing model columns (e.g. month_*, rolling*)
+    expected = model.get_booster().feature_names
+    for col in expected:
+        if col not in pred_df.columns:
+            pred_df[col] = 0.0
+
+    # Predict using the full required set
+    X = pred_df[expected]
+    features_df['predicted_pm25'] = model.predict(X)
+    # ------------------------------------------------------------------
+
+    # Merge with actual data
+    df = pd.merge(features_df,
+                  air_quality_df[['date','pm25','street','country']],
+                  on="date")
+
     df['days_before_forecast_day'] = 1
-    hindcast_df = df
-    df = df.drop('pm25', axis=1)
+    hindcast_df = df.copy()
+
+    
+    # BEFORE INSERTING → drop all columns not in Feature Group schema!
+    
+    allowed_cols = {f.name for f in monitor_fg.features}
+    df = df[[c for c in df.columns if c in allowed_cols]]
+    
+
     monitor_fg.insert(df, write_options={"wait_for_job": True})
+
     return hindcast_df

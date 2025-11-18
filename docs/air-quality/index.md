@@ -1,17 +1,21 @@
 # Air Quality Dashboard
 
+
 ![Hopsworks Logo](../titanic/assets/img/logo.png)
 
 {% include air-quality.html %}
 
-![Forecast](./assets/img/pm25_forecast.png)
+#### Sensor 1: Hedemora
 
+![Forecast](./assets/img/pm25_forecast_hedemora.png)
+![Hindcast](./assets/img/pm25_hindcast_1day_hedemora.png)
 
-There is also a Python program to interact with the air quality ML system using language (text, voice),
-powered by a [function-calling LLM](https://www.hopsworks.ai/dictionary/function-calling-with-llms).
+#### Sensor 2: Smedjebacken
 
-# Model Performance Monitoring
+![Forecast](./assets/img/pm25_forecast_w_675.png)
+![Hindcast](./assets/img/pm25_hindcast_1day_w_675.png)
 
-1-Day Hindcast: Predictions vs Outcomes
+#### Sensor 3: Falun
 
-![Hindcast](./assets/img/pm25_hindcast_1day.png)
+![Forecast](./assets/img/pm25_forecast_w_911.png)
+![Hindcast](./assets/img/pm25_hindcast_1day_w_911.png)
